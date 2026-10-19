@@ -1,0 +1,330 @@
+================================================================================
+PRUEBAS Y PROBLEMAS - GAME SHELF
+================================================================================
+
+Este archivo registra los problemas que aparecieron durante la implementacion,
+por que ocurrieron, como se resolvieron y como evitar que vuelvan.
+
+No es un informe de pruebas automatizadas. Es el registro de los obstaculos
+reales, que es donde esta el aprendizaje.
+
+
+--------------------------------------------------------------------------------
+1. better-sqlite3 no compilaba con Node 24
+--------------------------------------------------------------------------------
+SINTOMA
+  pnpm install fallaba al construir el modulo nativo:
+    ERR_PNPM_EXECUTOR_LIFECYCLE_SCRIPT_FAILED
+    better-sqlite3@11.10.0 install: prebuild-install || node-gyp rebuild --release
+    exited with exit code: 1
+
+CAUSA
+  La version fijada (11.10.0) no tiene binario precompilado para Node 24, asi
+  que cae al segundo paso de la cadena: compilar desde el codigo con node-gyp.
+  Eso requiere Visual Studio Build Tools con el workload de C++, que no esta
+  instalado en esta maquina.
+
+  El paso anterior, prebuild-install, tambien fallaba al descargar, por un
+  error de TLS contra el servidor de releases.
+
+SOLUCION
+  Actualizar a better-sqlite3 13.0.3, que ya trae precompilados para Node 24.
+
+  Antes de tocar el monorepo se probo la version en un directorio temporal
+  aislado. Eso costo un minuto y avoidedia cambiar la dependencia a ciegas y
+  volver a fallar.
+
+PREVENCION
+  Cuando una dependencia nativa falle, probar primero la version mas reciente en
+  un directorio scratch. Es mas barato que investigar el proyecto entero.
+  Si el proyecto fuera a dar soporte a Node 24 en produccion, la alternativa
+  robusta es node:sqlite, que viene en el runtime y no necesita compilar nada.
+
+  Nota: pnpm 12 bloquea los scripts de instalacion por seguridad. Si se agrega
+  una dependencia con script, hay que permitirla en pnpm-workspace.yaml con
+  onlyBuiltDependencies. Esta configurado para better-sqlite3 y esbuild.
+
+
+--------------------------------------------------------------------------------
+2. pnpm no se podia instalar con corepack
+--------------------------------------------------------------------------------
+SINTOMA
+  corepack enable fallaba con:
+    EPERM: operation not permitted, open 'C:\Program Files\nodejs\pnpm'
+
+CAUSA
+  corepack intenta crear el shim pnpm en la carpeta de instalacion de Node, que
+  requiere permisos de administrador. La sesion actual no los tiene.
+
+SOLUCION
+  Instalar pnpm en el prefijo del usuario, sin permisos administrativos:
+    npm install -g pnpm --prefix "$env:APPDATA\npm"
+
+  En shells donde esa carpeta no este en el PATH, anteponerla:
+    $env:PATH = "$env:APPDATA\npm;$env:PATH"
+
+PREVENCION
+  Documentar el paso en el README. Es el primer obstaculo que va a tener
+  cualquiera que clone el proyecto en otra maquina sin corepack.
+
+
+--------------------------------------------------------------------------------
+3. drizzle-kit rechazaba el target es2023
+--------------------------------------------------------------------------------
+SINTOMA
+  Al generar la migracion:
+    Invalid target "es2023" in "--target=es2023"
+
+CAUSA
+  drizzle-kit usa esbuild para cargar el archivo de configuracion, y esbuild no
+  reconoce es2023 como target valido. El tsconfig de la api usaba ES2023.
+
+SOLUCION
+  Bajar el target a ES2022, que es lo que acepta esbuild, y dejar ES2023 solo
+  en lib.
+
+PREVENCION
+  El target de tsconfig y las herramientas que lo consumen no siempre aceptan
+  los mismos valores. Cuando una herramienta externa se queje del target, el
+  problema es del target.
+
+
+--------------------------------------------------------------------------------
+4. La busqueda filtraba con menos de dos caracteres
+--------------------------------------------------------------------------------
+SINTOMA
+  Escribir una sola letra en el buscador no devolvia nada, y recargar la pagina
+  tampoco.
+
+CAUSA
+  El codigo era correcto (un solo caracter casi siempre sobra), pero la
+  experience era mala: el usuario escribe "h" esperando resultados y no ve
+  ninguna explicacion.
+
+SOLUCION
+  Mantener el minimo de dos caracteres, pero explicar en pantalla cuando la
+  consulta es demasiado corta, en vez de mostrar una lista vacia sin motivo.
+
+PREVENCION
+  Un estado vacio en la interfaz es una afirmacion: "no hay resultados". Si la
+  causa real es "todavia no has escrito suficiente", hay que decirlo.
+
+
+--------------------------------------------------------------------------------
+5. Atributos CSS incompletos: Playwright no encontraba el input de busqueda
+--------------------------------------------------------------------------------
+SINTOMA
+  La prueba de navegador fallaba al buscar el campo de busqueda.
+
+CAUSA
+  El input no tenia atributo for y la etiqueta no estaba asociada, ademas de que
+  el texto usaba caracteres no estandar.
+
+SOLUCION
+  htmlFor e id, y texto plano sin caracteres especiales:
+    <label htmlFor="q">Busqueda en el catalogo</label>
+    <input id="q" type="search" ... />
+
+PREVENCION
+  Un campo de formulario accesible se puede seleccionar de forma estable por
+  etiqueta. Vale la pena dejarlo bien desde el principio: es lo correcto y de
+  paso hace las pruebas resilientes.
+
+
+--------------------------------------------------------------------------------
+6. La etiqueta de forma ocultaba los generos con tilde
+--------------------------------------------------------------------------------
+SINTOMA
+  En la lista de generos aparecian "Atm?sfera" y "Automatizaci?n", con el
+  caracter acentuado perdido.
+
+CAUSA
+  Este NO era un error del proyecto. Los archivos en disco y la base de datos
+  tenian los acentos correctos; lo que fallaba era la codificacion de la
+  consola de PowerShell, que no muestra bien los caracteres no ASCII.
+
+SOLUCION
+  Verificar de tres formas antes de "arreglar" nada:
+  1. Buscar el caracter de reemplazo U+FFFD en los archivos, con lectura UTF-8
+     explicita. Resultado: ninguno.
+  2. Consultar la base de datos y volcar a un archivo UTF-8. Resultado: acentos
+     intactos.
+  3. Revisar en un navegador real, que es el destino final de los datos.
+
+SOLUCION PREVENTIVA ADOPTADA
+  Se compacto el catalogo en tres archivos mas pequenos en lugar de uno
+  grande. Los archivos grandes~, con este generador, salian a veces con
+  bytes nulos o caracteres de reemplazo en medio del texto.
+
+PREVENCION
+  Si un texto con acentos parece roto:
+  - Confirmar primero si el problema es la consola. Es el caso mas frecuente.
+  - Comprobar U+FFFD en lugar de fiarse de lo que se ve en pantalla.
+  - Verificar el dato en el destino final, que es el navegador.
+  - Mantener los archivos de datos en archivos pequenos y separados por tema.
+
+  Comprobacion util en PowerShell:
+    node -e "const t=require('fs').readFileSync('archivo.ts','utf8');console.log(/[\uFFFD\u0000]/.test(t))"
+
+
+--------------------------------------------------------------------------------
+7. Revisar el schema contra el modelo en memoria antes de migrar
+--------------------------------------------------------------------------------
+SINTOMA
+  Los conteos del seed no cuadraban con lo esperado.
+
+CAUSA
+  El seed inserta una fila por genero y juego, pero el genero de un titulo es
+  una lista. Si el seed recorre en orden incorrecto, el primero en insertarse crea
+  la relacion y el resto las duplican.
+
+SOLUCION
+  Verificar en el genero correcto: agrupar generos en el seed y usar los ids ya
+  resueltos. Despues, comprobar el total con indices y claves foraneas
+  directamente en la base de datos.
+
+PREVENCION
+  Contar con consultas reales despues de sembrar. Los numeros del log de
+  ejecucion mienten a veces; una consulta a la base de datos, no.
+
+
+--------------------------------------------------------------------------------
+8. Vitest fallaba por timeout al reanudar con pnpm dev corriendo
+--------------------------------------------------------------------------------
+SINTOMA
+  Al correr la suite al inicio de la sesion (11/10/2026):
+    FAIL tests/library-routes.test.ts
+    Error: Hook timed out in 10000ms.
+  El resto de los tests pasaba; solo el archivo con base de datos quedaba
+  saltado.
+
+CAUSA
+  Quedaban los servidores de desarrollo del cierre anterior ocupando :3000 y
+  :5173 (procesos 3308 y 7916). El test usa su propia base temporal, pero el
+  proceso del API y el watch competian por CPU y E/S y el beforeAll (migrar y
+  sembrar) se pasaba de los 10 segundos.
+
+SOLUCION
+  Cerrar los procesos antes de correr los tests:
+    Get-Process -Id 3308,7916 -ErrorAction SilentlyContinue | Stop-Process -Force
+  Con los puertos libres la suite completo en segundos.
+
+PREVENCION
+  Este repo deja el `pnpm dev` corriendo al cerrar la sesion. Antes de medir
+  algo (tests, build, capturas) hay que confirmar que no queden servidores:
+    Get-NetTCPConnection -State Listen -LocalPort 3000,5173
+  Si aparecen, cerrarlos. Un test que hereda el estado del cierre anterior no
+  es reproducible.
+
+
+--------------------------------------------------------------------------------
+9. react-hooks marcaba setState sincronico dentro de un efecto
+--------------------------------------------------------------------------------
+SINTOMA
+  `pnpm lint` fallaba en la Biblioteca nueva:
+    error  Calling setState synchronously within an effect can trigger
+    cascading renders  react-hooks/set-state-in-effect
+
+CAUSA
+  El `useEffect` que carga la biblioteca empezaba con `setLoading(true)` y
+  `setError(false)` en el cuerpo sincronico del efecto. eslint-plugin-react-hooks
+  (v7) lo considera un render en cascada.
+
+SOLUCION
+  Mover esos setState a la rama asincronica, diferidos con `setTimeout(..., 0)`.
+  Es el mismo patron que ya usaba la pagina Comparar, que dejo un comentario
+  explicando el porque.
+
+PREVENCION
+  En un efecto, el cuerpo debe suscribirse o disparar trabajo; los `setState`
+  van en el `.then`/`.catch`/`.finally` de la promesa, no antes. Si hace falta
+  tocar estado al inicio, diferirlo deja que React agrupe el render.
+
+
+--------------------------------------------------------------------------------
+10. node dist/index.js no arrancaba (imports ESM sin extension)
+--------------------------------------------------------------------------------
+SINTOMA
+  Al probar el build de produccion de la API:
+    Error [ERR_MODULE_NOT_FOUND]: Cannot find module
+    '.../dist/config/env' imported from '.../dist/index.js'
+  El proceso moria al arrancar.
+
+CAUSA
+  `tsc` compila los imports ESM sin agregar la extension `.js` (el proyecto usa
+  moduleResolution: Bundler, que no la reescribe). Node ESM exige la extension
+  explicita, a diferencia de `tsx`, que resuelve igual.
+
+SOLUCION
+  El runtime real de este proyecto es TypeScript: `tsx` resuelve imports sin
+  extension y ademas `packages/shared` se publica como fuentes
+  (`main: ./src/index.ts`), que `node dist` no puede cargar. Hacer que
+  `node dist/index.js` arranque exigiria agregar `.js` a todos los imports
+  relativos de api Y shared y compilar shared a JS, enredando el flujo de
+  desarrollo sin beneficio para un prototipo.
+
+  Por eso `start` ahora es una alternativa que funciona, con el mismo runtime
+  de `dev`:
+    "start": "tsx src/index.ts"
+  Verificado: `pnpm --filter @gameshelf/api start` levanta el API y
+  `GET /api/health` responde 200.
+
+PREVENCION
+  Un build que compila no es un build que arranca, y menos si la base consume
+  un paquete que se publica en TypeScript. El runtime del API es `tsx`; si el
+  proyecto llegara a desplegarse, el camino es compilar `shared` a JS y darle
+  extension `.js` a los imports relativos, no intentar saltarse `tsx`.
+
+
+--------------------------------------------------------------------------------
+VERIFICACION FINAL DE LA FASE 0
+--------------------------------------------------------------------------------
+  pnpm install ................................. sin errores
+  pnpm typecheck ............................... sin errores en 3 paquetes
+  pnpm lint .................................. sin errores en api y web
+  pnpm build .................................. sin errores
+  pnpm test ................................... 13 tests, 2 archivos, todos pasan
+  db:generate ................................ 9 tablas
+  db:seed .................................... 38 juegos, 39 generos, 2 cuentas
+
+  Contenido real de la base de datos:
+    juegos 38 | con itad_id 38 | generos 39
+    game_genres 114 | game_platforms 93 | user_games 37
+    duplicados en (user_id, game_id): 0
+
+  Navegador real (Chromium via Playwright):
+    pagina de estado renderiza ............... si
+    API reporta "Conectada" ................. si
+    Steam muestra 38 juegos ................. si
+    busqueda "elden" devuelve 2 resultados .. si
+    busqueda "hollow" devuelve 2 resultados . si
+    un caracter explica el minimo .......... si
+    consulta sin resultados lo dice ....... si
+    errores de consola ...................... 0
+
+
+--------------------------------------------------------------------------------
+VERIFICACION FASE 3 (SESION REAL Y PULIDO DE UI) - 11/10/2026
+--------------------------------------------------------------------------------
+  pnpm typecheck ............................... sin errores en 3 paquetes
+  pnpm lint .................................. sin errores en api y web
+  pnpm build .................................. sin errores
+  pnpm test ................................... 28 tests, 3 archivos, todos pasan
+  pnpm test:e2e ............................... 3 pruebas de humo, todas pasan
+
+  Contenido de los tests:
+    price-simulator ......... 6 | mock-price-source ....... 7
+    library-routes ......... 15 (sesion con cookie + CRUD + filtros)
+    e2e/smoke ............... 3 (estado, login+biblioteca, comparador)
+
+  Comprobado contra el API real (node --import tsx src/index.ts):
+    GET /api/library sin cookie .............. 401
+    POST /api/auth/login (casual) ............ 200 + cookie gs_session
+    GET /api/auth/me ......................... usuario "casual"
+    GET /api/library ......................... total 6, pageCount 1
+    GET /api/library?status=playing .......... 3 (Disco Elysium, Factorio,
+                                              Stardew Valley)
+    GET /api/library?status=inventado ........ 400
+    POST /api/auth/logout .................... borra la cookie
+
+================================================================================

@@ -1,0 +1,213 @@
+# Resumen de sesiones: Game Shelf
+
+**Estado:** Fases 0-2 completas, sesión real con cookie y pulido de UI, y cierre
+del plan 1 -> 2 -> 4 (12/10/2026) más un apartado extra fuera del plan (ver más
+abajo): búsqueda/alta de catálogo vía ITAD, filtro por género en Biblioteca y
+Buscar, búsqueda con una letra, catálogo semilla ampliado a **120 juegos** y
+estado editable desde la Biblioteca.
+55 tests de API + 3 de humo (Playwright) OK. Build, typecheck y lint OK. Todo
+lo pendiente está en la sección [Por hacer](#por-hacer-próxima-sesión).
+
+## Hecho
+
+### Fase 0 — base
+- Monorepo (pnpm), `packages/shared` (contratos), API Fastify + Drizzle +
+  SQLite, seed (38 juegos, 2 cuentas), mock de precios determinista, página de
+  estado en web.
+- Comandos de base: `db:generate/migrate/seed/reset`, `setup`, `dev`.
+
+### Fase 1 — auth y biblioteca
+- Rutas `/api/auth/*` (login/demo/me/logout) y `/api/library/*` (listado,
+  stats, alta/baja/patch básico).
+- Páginas web Login/Biblioteca/Buscar/Comparar (básicas) + navegación.
+
+### Fase 2 — comparador de precios
+- Ruta `/api/prices/compare/:gameId` con `buildPriceRows` + `summarize`;
+  páginas web conectadas.
+
+### Sesión 11/10/2026 — sesión real con cookie y pulido de UI
+- [x] Sesión con cookie httpOnly firmada (`apps/api/src/session.ts`):
+      `/auth/login` y `/auth/demo` emiten `gs_session`; `/auth/me` resuelve el
+      usuario desde la cookie; `/auth/logout` la borra. Se eliminó el fallback
+      `userId` por query: la biblioteca responde 401 sin sesión. `/auth/demo`
+      ya no devuelve `user: null`.
+- [x] `GET /library` acepta filtros `status` y `provider` (validados con Zod;
+      400 si son inválidos) además de `page`/`limit`. Los conteos de stats
+      alimentan los botones de filtro.
+- [x] Web: `SessionProvider` + `useSession` (fuente de verdad `/auth/me`),
+      cabecera con usuario/avatar/Salir, `RequireSession` (redirige a /login).
+      El Login deja de usar `window.location` y actualiza el contexto.
+- [x] Biblioteca con grilla de tarjetas, portada con fallback neutro
+      (`GameCover`), filtros por estado/tienda con conteos, paginación real,
+      skeletons, error con reintento y estados vacíos. Buscar también usa
+      portada y enlaza al comparador.
+- [x] Prueba de humo E2E con Playwright (`apps/web/e2e/smoke.spec.ts` +
+      `playwright.config.ts`): estado, login -> biblioteca con filtro, y
+      comparador con tabla. Se corre con `pnpm test:e2e`.
+- [x] Tests de rutas actualizados a cookie (401 sin sesión, filtros válidos e
+      inválidos): 28 tests de API al cierre de esa sesión.
+
+### Sesión 12/10/2026 — cierre del plan 1 -> 2 -> 4
+- [x] **1. Tests del comparador.** Nuevo `apps/api/tests/price-compare.test.ts`
+      con 11 casos sobre `buildPriceRows` y `summarize`: `isBest` en la tienda
+      más barata, empate determinista (orden en `PROVIDERS`), `owned` por
+      tienda, `atHistoricalLow` (límite exacto y por debajo), `potentialSavings`
+      = max - best, single-store -> 0, lista vacía -> `null/0/false` y
+      `ownedSomewhere`. Sin tocar código de producción. Suite total: 39 tests.
+- [x] **2. Error tipado en el cliente web.** `apps/web/src/lib/api.ts` distingue
+      fallo de red (`NetworkError`, cuando `fetch` rechaza) de error HTTP
+      (`ApiError`). Helper `isRetryable(error)`: red o 5xx -> reintentable;
+      4xx -> no. `Buscar.tsx` guarda el error real y muestra "Reintentar" solo
+      en fallos reintentables; en 4xx muestra el mensaje del API (ámbar).
+- [x] **4. Bug `node dist/index.js` no arrancaba.** `apps/api/package.json`:
+      `start` pasa a `tsx src/index.ts` (mismo runtime que `dev`). El `dist`
+      puro no puede cargar `@gameshelf/shared`, que se publica en TypeScript
+      (`main: ./src/index.ts`); detalle en `Pruebas.txt` nº 10. Verificado:
+      `pnpm start` en puerto 3999 -> `GET /api/health` 200.
+
+### Sesión 12/10/2026 — apartado extra (fuera del plan)
+Todo lo que sigue **no estaba en el plan 1 -> 2 -> 4**. Son iteraciones de la
+BETA que se fueron sumando encima durante la misma sesión, a medida que
+probábamos el demo (buscar/alta por ITAD, filtro de género, búsqueda corta,
+catálogo de 120 juegos y estado editable).
+
+- [x] **5. Agregar juegos al catálogo vía ITAD** (solo con `ITAD_API_KEY`).
+      Reutiliza `itadClient.searchByTitle()` que estaba sin usar. `GET
+      /api/games/search` ahora mezcla resultados del catálogo local con los de
+      ITAD: los existentes vuelven con su id (para comparar) y los nuevos con
+      `fromItad`. `POST /api/games` crea la fila en `games` la primera vez (con
+      `itadId` real) y da de alta. Sin clave: todo igual que antes. Un juego
+      traído de ITAD no tiene precios en modo mock (el comparador muestra el
+      aviso). Detalle de archivos:
+      `routes/games.ts`, `routes/library.ts` (`createCatalogGame`), `src/slug.ts`
+      (nuevo), `dto-game.ts` (`fromItad`), `Buscar.tsx` (chip ITAD),
+      `Comparar.tsx` (aviso). +4 tests de rutas.
+- [x] **6. Filtro por género en Biblioteca y Buscar.** Los 38 juegos de la
+      semilla ya estaban clasificados (`game_genres`, 114 filas); faltaba el
+      filtro. `GET /api/library` acepta ahora `genre` (subquery de ids para no
+      duplicar filas por multi-género) y `/library/stats` suma `byGenre`
+      (conteo por género del usuario, un juego puede estar en varios).
+      Biblioteca: fila de chips con contadores bajo los de tienda. Buscar:
+      chips calculados sobre los resultados en memoria (los de ITAD no traen
+      género -> solo bajo "Todos"). Archivos: `routes/library.ts`,
+      `dto-session.ts` (`byGenre`), `Biblioteca.tsx`, `Buscar.tsx`,
+      `lib/api.ts` (`LibraryQuery.genre`). +4 tests de rutas.
+- [x] **7. Buscar: filtros antes de escribir y una sola letra basta.**
+      `GET /api/games/search` ya no corta en <2 caracteres: sin `q` devuelve
+      el catálogo completo (así los filtros se ven/usan sin escribir nada) y
+      con 1 letra encuentra. ITAD se sigue consultando solo desde 2 caracteres.
+      Web: chips con contador visibles desde el catálogo y resultados desde
+      1 letra. Archivos: `routes/games.ts`, `Buscar.tsx`. +1 test de rutas.
+- [x] **8. Catálogo semilla de 38 a 120 juegos.** Se hardcodearon 82 juegos
+      nuevos (decisión para la BETA; precios/tiendas son pistas del simulador,
+      no valores reales) en `catalog-d.ts`/`catalog-e.ts`/`catalog-f.ts`,
+      apéndices a `MOCK_CATALOG` tras los 38 originales para no mover los ids
+      de la BD. Mezcla propositada: ~41 títulos muy conocidos (God of War,
+      Portal 2, Sekiro, Persona 5 Royal, Resident Evil 2/4, BioShock Infinite,
+      etc.), ~33 indies identificables (Return of the Obra Dinn, Slay the
+      Spire, Firewatch, Cult of the Lamb, Inscryption, Tunic...) y 8 de nicho
+      (Dwarf Fortress, OneShot, Ring of Pain, Northern Journey, DVOLVER, Frog
+      Fractions, Desktop Dungeons, The Void). Se descartaron títulos ya
+      presentes (Control, Death Stranding, Outer Wilds, Inside). Nuevo
+      `tests/catalog.test.ts` (6 tests): total 120, slugs/títulos únicos,
+      géneros no vacíos, `availableOn` ⊆ `PROVIDERS`, `onSale` ⊆
+      `availableOn`, `baseHint` entero > 0, itadIds fake únicos y seed
+      idempotente contra BD temporal sin slugs repetidos. Los tests que
+      asumían 38 (mock-price-source, library-routes, price-simulator) pasan
+      a `MOCK_CATALOG.length`. Verificado: `pnpm db:seed` real -> "120 juegos,
+      56 géneros"; suite 55 tests OK; typecheck/lint/build OK.
+- [x] **9. Buscar en Comparar con una letra (y nada si está vacío).** El campo
+      "O del catálogo" de `Comparar.tsx` buscaba con mínimo 2 caracteres;
+      ahora con 1 basta (el backend ya lo permitía desde el punto 7) y, si el
+      campo está vacío, no se muestra nada en vez de listar el catálogo.
+      Archivo: `pages/Comparar.tsx`. Sin cambios de API ni tests.
+- [x] **10. Estado editable desde la Biblioteca.** Cada tarjeta de
+      `Biblioteca.tsx` lleva un desplegable con los 4 estados (Pendiente,
+      Jugando, Terminado, Abandonado) que reemplaza al chip estático. Al
+      seleccionar se llama `PATCH /api/library/:gameId` (endpoint que ya
+      existía) vía `api.updateGame`; el select queda deshabilitado mientras
+      se envía. En éxito la tarjeta cambia al instante y se refrescan en
+      silencio listado y `/library/stats` (sin flash de skeletons) para que
+      un filtro de estado activo saque el juego y los contadores cuenten
+      bien; en error el select controlado vuelve solo al valor anterior y se
+      muestra un aviso cerrable. +1 test de rutas (el PATCH mueve el juego
+      entre `byStatus` de las stats). Los hooks `beforeAll` de
+      `library-routes.test.ts` y `catalog.test.ts` pasan a timeout 30s:
+      sembrar 120 juegos en BD temporal + login supera el default de 10s
+      cuando los archivos corren en paralelo.
+
+## Por hacer (próxima sesión)
+
+### 1. `price_cache` con TTL — solo con `ITAD_API_KEY` real
+- Archivos: `apps/api/src/routes/prices.ts` + helper nuevo
+  `apps/api/src/prices/cache.ts`.
+- Lógica: `price_cache` guarda `gameId` + `expiresAt`; los precios viven en la
+  tabla `prices`. Si `expiresAt > now`, leer de `prices` sin llamar a la fuente;
+  si no, `fetchPrices` -> upsert en `prices` y en `price_cache` con
+  `now + TTL` (p. ej. 6 h).
+- DONE: una 2ª llamada a `/prices/compare/:gameId` dentro del TTL no llama a la
+  fuente (comprobable con un contador en test); fuera del TTL sí.
+
+### 2. Menores de UI (opcionales; ver `Pendientes opcionales.txt`)
+- Ordenar la biblioteca (título/fecha/estado/precio): control en Biblioteca +
+  query `sort` en `GET /library`.
+- Formato de moneda por región (CLP sin decimales; USD/EUR con dos).
+- Atajos de teclado ("/" en Buscar, "g" a Biblioteca).
+
+### 3. Mejoras que esta sesión dejó a medio camino (opcionales)
+- **Editar precio pagado y notas desde la tarjeta.** El desplegable de estado
+  (punto 10) ya muestra el patrón; falta lo mismo para `pricePaid` y `notes`
+  (el `PATCH /api/library/:gameId` ya los acepta). Así la biblioteca deja de
+  ser solo filtrable y pasa a ser editable de verdad.
+- **Elegir el estado al agregar desde Buscar.** Hoy `POST /api/games` crea la
+  entrada siempre en "Pendiente"; un estado/select en el alta evitaría tener
+  que corregirlo después.
+- **Fecha de cambio de estado.** Registrar cuándo pasó a "Jugando"/"Terminado"
+  para mostrarlo y poder filtrar (requeriría columna nueva + migración).
+- **Chips de género también en "O del catálogo" de Comparar.** Buscar ya los
+  tiene (punto 7); comparar podría reusar el mismo patron para encontrar el
+  juego más rápido con el catálogo de 120.
+
+Orden sugerido: **1** solo cuando haya clave ITAD real (mientras tanto no aporta
+nada); de **2**, lo más visible es ordenar la biblioteca; de **3**, editar
+precio/notas es el que más cambia la impresión que da el demo.
+
+## Archivos clave
+- `apps/api/src/session.ts`, `src/slug.ts`, `itad/client.ts`,
+  `routes/{auth,library,games,prices}.ts`, `app.ts`
+- `apps/api/tests/price-compare.test.ts` (comparador),
+  `tests/library-routes.test.ts` (sesión con cookie + filtros + alta ITAD)
+- `apps/web/src/lib/api.ts` (NetworkError/isRetryable), `lib/session.ts`,
+  `components/{SessionProvider,RequireSession,GameCover}.tsx`
+- `apps/web/src/AppLayout.tsx`, `main.tsx`,
+  `pages/{Login,Biblioteca,Buscar,Comparar}.tsx`
+- `apps/web/e2e/smoke.spec.ts`, `apps/web/playwright.config.ts`
+- `packages/shared/src/dto-*` (contratos compartidos)
+
+## Comandos útiles (para reanudar)
+```bash
+cd "C:\Users\VirusZ\Desktop\Game Shelf"
+$env:PATH = "$env:APPDATA\npm;$env:PATH"
+pnpm install
+pnpm typecheck
+pnpm lint
+pnpm test        # 55 tests de API (Vitest)
+pnpm test:e2e    # 3 tests de humo (Playwright; arranca api+web solo)
+pnpm build
+pnpm start       # api con tsx (alternativa funcional a node dist/index.js)
+pnpm dev         # api :3000, web :5173
+```
+
+## Notas
+- Contra el API real se verificó: `GET /api/library` sin cookie -> 401;
+  login -> cookie `gs_session`; `/auth/me` devuelve el usuario; filtros
+  `status`/`provider` correctos; logout borra la cookie.
+- `SESSION_SECRET` es opcional en `apps/api/.env`; sin él se usa un secreto de
+  desarrollo. SQLite en `apps/api/data/gameshelf.db`.
+- Al cierre del 12/10/2026 quedaron dos servidores corriendo (pid 20848 en
+  :5173 y 21860 en :3000) que no se pudieron cerrar por permisos (Acceso
+  denegado). Playwright los reutiliza si siguen vivos; para tests limpios
+  conviene cerrarlos (ver `Pruebas.txt` nº 8).
+- Al cerrar cada sesión: mover lo hecho a "Hecho" (con su fecha, como arriba),
+  actualizar "Por hacer" y la verificación de "Comandos útiles", igual que en
+  las sesiones anteriores.

@@ -1,0 +1,168 @@
+JUEGOS DISPONIBLES EN LA PAGINA
+
+Catalogo del prototipo Game Shelf: todos estos juegos aparecen en la
+busqueda, se pueden anadir a la biblioteca y comparar precios.
+
+Total: 38 juegos
+
+1. A Plague Tale: Innocence
+   Tiendas: Steam, Epic Games Store
+   Generos: Aventura, Narrativo, Sigilo
+
+2. Baldur's Gate 3
+   Tiendas: Steam, GOG
+   Generos: RPG, Estrategia, Cooperativo
+
+3. Celeste
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Plataformas, Puzles, Indie
+
+4. Control
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Action, Sobrenatural, Tercera persona
+
+5. Cyberpunk 2077
+   Tiendas: Steam, GOG
+   Generos: RPG, Mundo abierto, Ciencia ficción
+
+6. Dead Cells
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Roguelike, Metroidvania, Action
+
+7. Death Stranding
+   Tiendas: Steam, GOG
+   Generos: Aventura, Exploración, Ciencia ficción
+
+8. Disco Elysium
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: RPG, Detective, Narrativo
+
+9. Dragon Age: Inquisition
+   Tiendas: Steam, GOG
+   Generos: RPG, Fantasía, Mundo abierto
+
+10. Elden Ring
+   Tiendas: Steam, GOG
+   Generos: Action RPG, Souls-like, Mundo abierto
+
+11. Elden Ring: Nightreign
+   Tiendas: Steam, Epic Games Store
+   Generos: Action RPG, Cooperativo, Souls-like
+
+12. Factorio
+   Tiendas: Steam, GOG
+   Generos: Simulación, Automatización, Estrategia
+
+13. Griftlands
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Roguelike, Cartas, Indie
+
+14. Hades
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Roguelike, Action, Indie
+
+15. Hollow Knight
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Metroidvania, Plataformas, Indie
+
+16. Hollow Knight: Silksong
+   Tiendas: Steam, Epic Games Store
+   Generos: Metroidvania, Plataformas, Indie
+
+17. Inside
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Plataformas, Puzles, Atmósfera
+
+18. It Takes Two
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Cooperativo, Aventura, Plataformas
+
+19. Kentucky Route Zero
+   Tiendas: Steam, GOG
+   Generos: Aventura, Puzles, Narrativo
+
+20. Liars and Thieves
+   Tiendas: Steam, GOG
+   Generos: Robo, Cooperativo, Indie
+
+21. Mass Effect: Legendary Edition
+   Tiendas: Steam, GOG
+   Generos: RPG, Ciencia ficción, Narrativo
+
+22. Monument Valley 2
+   Tiendas: Steam, GOG
+   Generos: Puzles, Minimalista, Indie
+
+23. No Man's Sky
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Exploración, Supervivencia, Mundo abierto
+
+24. Outer Wilds
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Exploración, Puzles, Indie
+
+25. Red Dead Redemption 2
+   Tiendas: Steam, Epic Games Store
+   Generos: Mundo abierto, Aventura, Western
+
+26. Returnal
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Roguelike, Terror, Tercera persona
+
+27. Rogue Legacy 2
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Roguelike, Metroidvania, Indie
+
+28. Satisfactory
+   Tiendas: Steam
+   Generos: Simulación, Automatización, Primera persona
+
+29. Sea of Stars
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: RPG, Píxeles, Cooperativo
+
+30. Sifu
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Action, Artes marciales, Indie
+
+31. Stardew Valley
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Simulación, Agricultura, Indie
+
+32. Stardew Valley: Expanded
+   Tiendas: Steam
+   Generos: Simulación, Agricultura, Indie
+
+33. Subnautica
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Supervivencia, Exploración, Underwater
+
+34. Sunless Sea
+   Tiendas: Steam, GOG
+   Generos: Exploración, RPG, Narrativo
+
+35. Terraria
+   Tiendas: Steam, GOG
+   Generos: Sandbox, Aventura, Indie
+
+36. The Expanse: A Telltale Series
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Aventura, Narrativo, Ciencia ficción
+
+37. The Witcher 3: Wild Hunt
+   Tiendas: Steam, GOG
+   Generos: RPG, Mundo abierto, Fantasía
+
+38. Wreckfest
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Carreras, Destrucción, Multijugador
+
+Cobertura de tiendas:
+  - Steam: 38 juegos
+  - Epic Games Store: 23 juegos
+  - GOG: 32 juegos
+
+Fecha: 2026-10-07
+
+Nota (11/10/2026): sin cambios. El catalogo sigue con 38 juegos; la sesion con
+cookie, la grilla y los filtros de la Biblioteca no agregan ni quitan titulos.

@@ -1,0 +1,65 @@
+@import 'tailwindcss';
+
+/*
+  Paleta y tipografia base.
+  El tema oscuro es el predeterminado: es un catalogo de juegos y las
+  portadas se leen mucho mejor sobre fondo oscuro.
+*/
+
+@theme {
+  --color-shelf-950: oklch(0.18 0.02 265);
+  --color-shelf-900: oklch(0.22 0.02 265);
+  --color-shelf-800: oklch(0.28 0.02 265);
+  --color-shelf-700: oklch(0.36 0.02 265);
+  --color-shelf-600: oklch(0.48 0.02 265);
+  --color-shelf-400: oklch(0.72 0.02 265);
+  --color-shelf-200: oklch(0.88 0.01 265);
+  --color-shelf-50: oklch(0.97 0.005 265);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-shelf-950 text-shelf-50 antialiased;
+    font-family:
+      'Inter',
+      system-ui,
+      -apple-system,
+      'Segoe UI',
+      sans-serif;
+  }
+}
+
+@layer components {
+  /*
+    Boton base: solo la forma. El color va aparte para poder combinarlo
+    (`class="btn btn-primary"`). En Tailwind v4 no se puede hacer
+    `@apply btn` desde otra regla de `@layer components`.
+  */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2
+      text-sm font-medium transition-colors disabled:cursor-not-allowed
+      disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply bg-indigo-500 text-white hover:bg-indigo-400;
+  }
+
+  .btn-ghost {
+    @apply text-shelf-200 hover:bg-shelf-800;
+  }
+
+  .card {
+    @apply rounded-xl border border-shelf-800 bg-shelf-900;
+  }
+
+  /* Etiqueta de genero en las tarjetas. */
+  .chip {
+    @apply inline-flex items-center rounded-full bg-shelf-800 px-2 py-0.5
+      text-xs text-shelf-200;
+  }
+}

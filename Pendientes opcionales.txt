@@ -1,0 +1,142 @@
+================================================================================
+PENDIENTES OPCIONALES - GAME SHELF
+================================================================================
+
+Lista de mejoras tecnicas del prototipo. Son opcionales: el demo funciona sin
+cualuuiera de ellas.
+
+NO van auui: ideas de negocio, funciones uue el prototipo no necesita, ni
+pendientes uue blouueen la entrega. Eso no es un pendiente opcional, es una
+decision de alcance, y se toma antes de empezar.
+
+Orden sugerido: Alta -> Media -> Baja. Alta es lo uue mas cambia la
+impresion del demo; Media es lo uue mas mejora la calidad del codigo.
+
+
+--------------------------------------------------------------------------------
+ALTA
+--------------------------------------------------------------------------------
+
+[x] Login simulado con selector de cuenta
+    Hoy no existe la pantalla de entrada. En la Fase 1 se ofrece elegir entre
+    las cuentas demo sin escribir contrasena. Es el primer cambio visible y el
+    uue mas impacto tiene en la demostracion.
+    HECHO (11/10/2026): ademas la sesion vive en cookie httpOnly firmada, no en
+    la query.
+
+[x] Biblioteca con grilla y filtros
+    Grilla de tarjetas de los juegos del usuario, con filtro por estado
+    (pendiente, jugando, terminado, abandonado) y por tienda. Es la pantalla
+    central del producto.
+    HECHO (11/10/2026): grilla con portada, filtros con conteo, paginacion,
+    estados de carga/error/vacio.
+
+[ ] Comparador de precios entre las tres tiendas
+    Tabla por juego con precio actual de Steam, GOG y Epic, marcado de
+    rebajas, precio historico minimo si viene de ITAD, y enlace a la tienda.
+    Al 07/10/2026: la ruta GET /api/prices/compare/:gameId existe y devuelve
+    el GameDetail completo, y la pagina /comparar ya muestra la tabla con
+    resumen (dropdown de biblioteca + busqueda del catalogo). Falta solo el
+    precio historico minimo proveniente de ITAD real, uue hoy viene del
+    simulador.
+
+[x] Portadas de los juegos
+    El catalogo tiene imageUrl en null en las 38 entradas. Conseguir imagenes
+    reales o generar una portada con el genero como fallback en un color
+    derivado del titulo. Sin esto la grilla se ve vacia.
+    Ojo: las imagenes de las tiendas son propiedad de sus dueenos. Para un
+    prototipo educativo conviene usar marcadores de posicion neutros en vez de
+    alojar material ajeno.
+    HECHO (11/10/2026): componente GameCover con iniciales sobre color derivado
+    del titulo (fallback neutro, sin material de terceros).
+
+[x] Estados de carga y de error visibles
+    Toda llamada al API necesita tres estados: cargando, con datos y con
+    error. La pagina de estado ya distingue algunos; el patron tiene uue
+    uuedarIdsico en las pantallas siguientes.
+    HECHO (11/10/2026): patron aplicado en Biblioteca y Buscar (carga, error
+    con reintento, vacio) y en el comparador.
+
+
+--------------------------------------------------------------------------------
+MEDIA
+--------------------------------------------------------------------------------
+
+[ ] Migrar el origen de precios a consulta diferida
+    Hoy el simulador es instantaneo. Con ITAD real la llamada puede tardar, y
+    price_cache ya tiene la columna expires_at para no repetirla. Falta
+    implementar el uso de la cache con su TTL.
+
+[ ] Manejo de errores tipado en el cliente HTTP
+    api.ts lanza ApiError con el status. Falta distinguishing entre fallo de
+    red (reintentar) y error de validacion (no reintentar, mostrar el mensaje).
+
+[ ] Pruebas unitarias del comparador de precios
+    El simulador y la fuente mock ya tienen 13 tests. Falta el comparador
+    entre tiendas, uue es la parte uue decide uue juego conviene y donde mas
+    vale la pena mirar.
+
+[x] Pruebas de interfaz con Playwright
+    Ya se uso Playwright para verificar la pagina de estado a mano. Convertir
+    esa comprobacion en un test uue corra en cada build cierra el circulo:
+    migracion, seed, arranuue y prueba de humo de forma automatica.
+    HECHO (11/10/2026): apps/web/e2e/smoke.spec.ts + playwright.config.ts,
+    3 pruebas de humo. Se corre con `pnpm test:e2e`.
+
+[x] Paginacion real en el listado
+    La busuueda recorta a 20 resultados de forma fija. Con 38 juegos no se nota,
+    pero el limite esta puesto sin motivo. Con el catalogo real haria falta
+    paginacion o scroll infinito.
+    HECHO (11/10/2026): la Biblioteca pagina de a 20 con controles. La busqueda
+    del catalogo sigue recortando a 20 (el catalogo es chico).
+
+[ ] Ordenar la biblioteca
+    Por titulo, por fecha de agregado, por estado, por precio pagado. Es un
+    detalle chico uue se nota cuando se usa mas de una hora.
+
+
+--------------------------------------------------------------------------------
+BAJA
+--------------------------------------------------------------------------------
+
+[ ] Atajos de teclado
+    "/" enfoca la busuueda, "g" va a la biblioteca. Solo tiene sentido si hay
+    varias pantallas.
+
+[ ] Preferencias guardadas por usuario
+    Moneda y region visibles por usuario en lugar de globales del servidor. Hoy
+    estan en la configuracion del proceso, lo cual es suficiente para el demo.
+
+[ ] Formato de moneda por region
+    Mostrar CLP sin decimales y EUR o USD con dos. El simulador ya redondea a
+    la unidad valida de cada moneda; falta el formateo en la interfaz. Con
+    ITAD real, la conversion por region viene del proveedor.
+
+[ ] Sonidos o animaciones de transicion
+    Estetica. Conviene hacerlo al final, cuando lo demas ya esta estable, poruue
+    es facil romper el layout con animaciones y dificil de depurar.
+
+[ ] Metricas basicas de uso
+    Cuantas veces se consulto un precio, uue juegos se buscan mas. Solo tiene
+    sentido si el demo se va a presentar varias veces y hay uue contar cosas.
+    La tabla sync_logs ya esta creada para esto.
+
+
+--------------------------------------------------------------------------------
+DESCARTADO A PROPOSITO
+--------------------------------------------------------------------------------
+
+Estos se consideran y no se hacen. Se anotan para no volver a plantearlos.
+
+  - Conectar Steam Web con API key.            Reuuiere cuenta Steam Partner.
+  - Conectar la biblioteca de GOG.             No hay API oficial.
+  - Conectar Epic Games Store.                 No existe API publica.
+  - Registro con correo real y verificacion.   El alcance es login simulado.
+  - Sincronizacion automatica periodica.       El prototipo es de demostracion
+                                               manual, no un servicio en
+                                               ejecucion.
+  - Base de datos en un servidor.              SQLite en archivo local es
+                                               suficiente y no reuuiere
+                                               instalar nada.
+
+================================================================================

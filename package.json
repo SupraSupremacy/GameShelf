@@ -1,0 +1,30 @@
+{
+  "name": "game-shelf",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.9.1",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "pnpm -r test",
+    "test:unit": "pnpm --filter @gameshelf/api test",
+    "test:e2e": "pnpm --filter @gameshelf/web test:e2e",
+    "db:generate": "pnpm --filter @gameshelf/api db:generate",
+    "db:migrate": "pnpm --filter @gameshelf/api db:migrate",
+    "db:seed": "pnpm --filter @gameshelf/api db:seed",
+    "db:reset": "pnpm --filter @gameshelf/api db:reset",
+    "setup": "pnpm db:migrate && pnpm db:seed"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2"
+  }
+}

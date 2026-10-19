@@ -1,0 +1,74 @@
+====================================================================
+ABRIR LOCALHOST (Game Shelf) - dejarlo corriendo de forma estable
+====================================================================
+
+Objetivo
+--------
+Levantar el servidor de desarrollo (API + web) para poder abrir la pagina
+en http://localhost:5173 sin que se cierre al interrumpir la conversacion
+con el asistente.
+
+IMPORTANTE: no lanzar el servidor desde una herramienta del asistente.
+Los procesos que arranca el asistente son hijos de su propia shell y se
+matan cuando se interrumpe o se cierra el chat. Por eso hay que correrlo
+en una terminal propia.
+
+--------------------------------------------------------------------
+PASOS (PowerShell)
+--------------------------------------------------------------------
+1) Abre PowerShell (Windows Terminal o el que uses).
+
+2) Pega estos comandos y dale Enter:
+
+   cd "C:\Users\VirusZ\Desktop\Game Shelf"
+   $env:PATH = "$env:APPDATA\npm;$env:PATH"
+   pnpm dev
+
+3) Espera a ver estas lineas (puede tardar unos segundos):
+
+   API lista en http://localhost:3000
+   Precios: mock | Demo: si
+   Local:   http://localhost:5173/
+
+4) Deja esa ventana de PowerShell ABIERTA.
+   Mientras siga abierta, el localhost funciona aunque interrumpas o
+   cierres la conversacion con el asistente.
+
+5) Para detenerlo: presiona Ctrl+C en esa misma ventana.
+
+--------------------------------------------------------------------
+ABRIR LA PAGINA / VERIFICAR
+--------------------------------------------------------------------
+- Web:      http://localhost:5173
+- Comparar: http://localhost:5173/comparar
+- Health:   http://localhost:3000/api/health  ->  { "ok": true }
+
+Comprobacion rapida de que ambos puertos estan escuchando (en otra
+ventana de PowerShell):
+
+   Get-NetTCPConnection -State Listen -LocalPort 3000,5173
+
+Debe listar los puertos 3000 (API) y 5173 (web).
+
+--------------------------------------------------------------------
+PROBLEMAS COMUNES
+--------------------------------------------------------------------
+- "pnpm no se reconoce como comando":
+  Falta la linea de PATH del paso 2. Vuelve a ejecutarla.
+
+- "EADDRINUSE" en 3000 o 5173:
+  Ya hay otro servidor corriendo en ese puerto. Cierra la otra ventana
+  de pnpm dev o abre la URL que ya estaba activa.
+
+- La pagina abre pero no cargan datos / comparador:
+  Suele ser que la API (:3000) no esta corriendo. Revisa que en la
+  ventana de pnpm dev siga apareciendo el servidor activo.
+
+--------------------------------------------------------------------
+NOTAS
+--------------------------------------------------------------------
+- Node/pnpm requeridos: Node v24.x y pnpm 12.x (ya instalados en esta
+  maquina).
+- Base de datos SQLite en: apps/api/data/gameshelf.db
+- El servidor se detiene al cerrar la ventana de PowerShell, y tambien
+  al cerrar sesion en Windows o reiniciar.

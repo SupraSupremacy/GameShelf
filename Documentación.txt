@@ -1,0 +1,278 @@
+================================================================================
+DOCUMENTACION - GAME SHELF
+Prototipo educativo de biblioteca de juegos con comparador de precios.
+================================================================================
+
+Este archivo es la bitacora del proyecto. Cada fase se cierra aqui con que se
+hizo, que decisiones se tomaron, que archivos son clave y como se verifico.
+
+Los problemas tecnicos con su causa y solucion estan en "Pruebas.txt".
+Lo que falta, en "Pendientes opcionales.txt".
+El analisis de fuentes de datos, en "ANALISIS-APIs.md".
+
+
+--------------------------------------------------------------------------------
+FASE 0 - BASE DEL PROYECTO
+================================================================================
+
+OBJETIVO
+Que el proyecto arranque de extremo a extremo: monorepo instalado, esquema en
+base de datos, catalogo sembrado, contratos compartidos y API respondiendo. Sin
+interfaz de biblioteca todavia.
+
+QUE SE HIZO
+
+1. Estructura del monorepo
+   Tres paquetes con pnpm workspaces:
+   - apps/api          Fastify + Drizzle + SQLite
+   - apps/web          React 19 + Vite + Tailwind v4
+   - packages/shared   contratos y tipos que ambos consumen
+
+   Se eligio un paquete compartido para que api y web usen exactamente los
+   mismos DTO. El alternativa habitual es duplicar los tipos a mano, y lo que
+   pasa es que los dos lados se desincronizan y el error aparece en el
+   navegador en vez de en el compilador.
+
+2. Variables de entorno
+   apps/api/src/config/env.schema.ts valida con Zod al arrancar. Si falta una
+   variable o esta mal, el proceso para con un mensaje claro en vez de fallar
+   en la primera consulta.
+
+   Variables: NODE_ENV, DATABASE_URL, DEMO_MODE, PRICES_SOURCE,
+   DEFAULT_COUNTRY, DEFAULT_CURRENCY, ITAD_API_KEY, ITAD_API_BASE,
+   STEAM_API_KEY, GOG_CLIENT_ID, PORT, HOST.
+
+   Las claves de Steam y GOG se declaran aunque no se usen todavia: deja claro
+   que existen y donde van a entrar.
+
+3. Esquema de base de datos
+   Nueve tablas, generadas con Drizzle Kit desde el esquema y versionadas en
+   src/db/migrations.
+
+   users              cuentas (demo y reales)
+   games              catalogo normalizado
+   genres             generos
+   game_genres        relacion juego-genero
+   game_platforms     en que tienda esta cada juego
+   user_games         biblioteca del usuario
+   prices             precio historico por tienda
+   price_cache        cache con vencimiento
+   sync_logs          registro de sincronizaciones
+
+   DECISION: los montos son enteros en la unidad pequena (centavos), nunca
+   punto flotante. Un CLP de ejemplo se guarda como 1990, no 19.9. El punto
+   flotante en dinero produce errores de redondeo que aparecen mucho despues y
+   son horribles de rastrear.
+
+   DECISION: unique(user_id, game_id) en user_games. Un juego esta o no esta en
+   una biblioteca; que ademas se pueda repetir el mismo titulo en la misma
+   usuario solo genera confusion. La restriccion va en la base de datos, no
+   solo en el codigo, porque el codigo se puede Saltar.
+
+4. Proveedores como interfaz
+   packages/shared/src/provider.ts define LibraryProvider con una sola
+   operacion, listOwnedGames.
+
+   Existe una sola implementacion, que es un mock. Pero la interfaz ya esta
+   definida, y con ella la decision de diseno: cuando se quiera conectar una
+   API real, se agrega una clase mas y no se toca nada de lo que ya funciona.
+
+   REGLA: las implementaciones reales no se crean en esta fase. Se crean solo si
+   una API resulta utilizable, y segun el analisis, ninguna lo es sin
+   credenciales que el prototipo no puede pedir. Ver ANALISIS-APIs.md.
+
+5. Catalogo semilla
+   38 juegos repartidos en tres archivos, con generos y tiendas. Incluye
+   generos sin tilde a proposito ("Souls-like", "Mundo abierto", "Woolly") para
+   comprobar que la codificacion se mantiene correcta en la base de datos y en
+   la interfaz.
+
+   El archivo de seed es idempotente: se puede correr las veces que haga falta
+   sin duplicar nada.
+
+6. Origen de precios
+   PriceSource es una interfaz con dos implementaciones:
+   - ItadPriceSource   consulta IsThereAnyDeal si hay ITAD_API_KEY
+   - MockPriceSource   simulador determinista
+
+   Segun PRICES_SOURCE: auto (ITAD si hay clave, si no mock), itad (solo ITAD)
+   o mock (siempre simulado).
+
+   DECISION: el simulador no usa azar. Deriva el precio de un baseHint por
+   juego y aplica descuentos deterministas a las tiendas marcadas en onSale.
+   La misma consulta devuelve siempre la misma tabla. Es lo que permite que
+   las capturas de pantalla del informe sean reproducibles.
+
+7. API inicial
+   GET /api/health                sonda de vida
+   GET /api/info                  configuracion efectiva, expone si hay ITAD
+   GET /api/games/search?q=       busqueda en el catalogo
+   GET /api/games/genres          generos para el filtro
+   GET /api/providers/:id/preview cuantos juegos ve cada proveedor
+
+   /api/info existe para que el frontend pueda mostrar el estado real del
+   sistema en vez de suponerlo.
+
+8. Frontend inicial
+   Una pagina de estado que no es decorativa: comprueba de extremo a extremo que
+   el frontend llega al API, que la base esta sembrada y que la busqueda
+   responde. Si algo del monorepo se rompe, esa pagina lo delata.
+
+   El cliente HTTP usa rutas relativas. Vite hace proxy de /api al backend en
+   desarrollo, asi que no hay CORS ni URLs distintas por entorno.
+
+   Tailwind v4 con configuracion en CSS mediante @theme. Sin archivo de
+   configuracion de JavaScript.
+
+   DISTINTIVO DE MODO DEMO: visible en la cabecera, siempre. No es un error
+   que falten datos, es una decision de producto, y el usuario tiene que ver
+   desde el primer segundo que esta mirando datos simulados.
+
+9. Tests unitarios de la capa de precios
+   13 tests con Vitest sobre el simulador y la fuente mock. Se eligio esa
+   capa porque es logica pura y determinista: se puede comprobar el valor
+   exacto de la salida, sin base de datos ni peticiones de red.
+
+   Cubren lo que un error alli romperia en silencio: determinismo, respeto de
+   la moneda pedida, redondeo a la unidad valida, que el minimo historico no
+   supere el precio actual, y que un id fuera de rango no tumbe la pagina.
+
+   El determinismo del simulador no es un detalle menor: es lo que permite que
+   las capturas de pantalla del informe del proyecto sean reproducibles. Un
+   precio que cambia en cada ejecucion hace imposible documentar el resultado.
+
+ARCHIVOS CLAVE
+  package.json                          raiz del monorepo, scripts
+  pnpm-workspace.yaml                   paquetes y scripts de build permitidos
+  apps/api/src/config/env.schema.ts     validacion de entorno con Zod
+  apps/api/src/db/schema*.ts            las nueve tablas
+  apps/api/src/db/migrations/           SQL versionado
+  apps/api/src/db/seed*.ts              catalogo y cuentas demo
+  apps/api/src/providers/provider.ts    interfaz del proveedor
+  apps/api/src/providers/catalog-*.ts   catalogo semilla
+  apps/api/src/prices/                  PriceSource, ITAD y simulador
+  packages/shared/src/                  contratos compartidos
+  apps/web/src/pages/Status.tsx         pagina de estado
+  apps/web/src/lib/api.ts               cliente HTTP
+
+VERIFICACION
+  - pnpm install, build, typecheck, lint y test sin errores
+  - db:generate produce 9 tablas; db:seed reporta 38 juegos, 39 generos y
+    2 cuentas demo
+  - Contenido en base de datos: 38 juegos (38 con itad_id), 37 user_games
+    (6 casual + 31 coleccionista), 93 game_platforms, 114 game_genres
+  - Sin duplicados en (user_id, game_id)
+  - 13 tests unitarios pasan
+  - Los acentos y la enye sobreviven el ciclo completo: archivo -> base de
+    datos -> respuesta HTTP -> pantalla, ver Pruebas.txt
+  - Navegador real con Playwright: pagina de estado renderiza, API reporta
+    "Conectada", las busquedas de "elden" y "hollow" devuelven 2 resultados,
+    un caracter suelto explica el minimo de busqueda, y no hay errores de
+    consola
+
+ESTADO AL CERRAR
+  Login, Biblioteca, Buscar y Comparador NO existen todavia. El cliente HTTP ya
+  declara sus endpoints, pero la pagina de estado es la unica implementada.
+  Eso es intencional: las fases 1 y 2 los construyen encima de esta base.
+
+PENDIENTE PARA LAS SIGUIENTES FASES
+  - Rutas de sesion y biblioteca, y las paginas que las consumen
+  - Endpoint de comparacion de precios
+  - Uso de price_cache con su TTL cuando la fuente sea ITAD real
+  - Convertir la comprobacion manual con Playwright en un test de interfaz
+
+
+--------------------------------------------------------------------------------
+FASES 1 Y 2 - CIERRE RAPIDO
+===============================================================================
+
+La bitacora detallada de las fases 1 y 2 (sesion simulada, biblioteca y
+comparador) vive en RESUMEN_SESION.txt, que es el documento operativo de la
+sesion siguiente. Estado al cerrar el 07/10/2026:
+
+HECHO
+  - CRUD de biblioteca completo (listado, stats, alta, patch, delete), con
+    tests HTTP sobre base temporal (22 tests en total).
+  - Alta manual desde Buscar ("Añadir a biblioteca").
+  - Comparador funcional en /comparar (dropdown + busqueda + tabla + resumen).
+  - Contrato compartido ampliado: SearchResult.id, PriceComparison
+    .bestFinalPrice y .potentialSavings. Eliminado un `as any` en prices.ts.
+
+PENDIENTE
+  - Sesion real con cookies (hoy el userId se pasa por query).
+  - Pulir UI de Biblioteca (grilla/filtros, estados vacios, paginacion).
+  - price_cache con TTL si llega ITAD real.
+  - Playwright como test automatizado.
+
+
+--------------------------------------------------------------------------------
+FASE 3 - SESION REAL Y PULIDO DE UI (11/10/2026)
+================================================================================
+
+OBJETIVO
+Cerrar los dos pendientes operativos: que la sesion viva en una cookie (y no en
+la query) y que la Biblioteca sea util de verdad (grilla, filtros, paginacion),
+mas convertir la comprobacion manual de navegador en un test.
+
+1. Sesion con cookie firmada
+   Nuevo `apps/api/src/session.ts`. La cookie `gs_session` es httpOnly y va
+   firmada con `SESSION_SECRET` (con valor de desarrollo por defecto, porque el
+   prototipo no maneja secretos). `/auth/login` y `/auth/demo` la emiten;
+   `/auth/me` resuelve el usuario desde ella; `/auth/logout` la borra.
+
+   DECISION: se elimino el `userId` por query. Antes cualquier llamada podia
+   leer la biblioteca de otro usuario pasando `?userId=`; con la cookie el
+   navegador no puede elegir a quien pertenece la sesion. Las rutas de
+   biblioteca ahora responden 401 sin sesion.
+
+   `@fastify/cookie` ya estaba registrado; solo se le agrego el secreto.
+
+2. Filtros en la biblioteca
+   `GET /library` acepta `status` y `provider`, validados con Zod (400 si son
+   invalidos) ademas de `page`/`limit`. Se conservan los conteos de stats, que
+   ahora alimentan los botones de filtro.
+
+3. Web: contexto de sesion
+   `SessionProvider` + `useSession` consultan `/auth/me` una vez y comparten el
+   resultado. `RequireSession` redirige a /login las paginas que lo necesitan.
+   La cabecera muestra el usuario, su avatar y el boton Salir. El Login dejo de
+   usar `window.location.href` y ahora actualiza el contexto.
+
+4. Biblioteca con grilla
+   Tarjetas con portada, generos, estado y precio pagado. La portada usa un
+   fallback neutro (`GameCover`): iniciales sobre un color derivado del titulo,
+   porque el catalogo no trae imagenes y no conviene alojar material de las
+   tiendas. Filtros por estado y tienda con conteo, paginacion real, skeletons
+   de carga, error con reintento y estados vacios distintos (biblioteca vacia
+   vs. filtros sin coincidencias).
+
+5. Prueba de humo con Playwright
+   `apps/web/e2e/smoke.spec.ts` + `playwright.config.ts`. Su webServer arranca
+   api+web con el mismo `pnpm dev`. Cubre: pagina de estado, login -> biblioteca
+   con grilla y filtro, y comparador con tabla.
+
+ARCHIVOS CLAVE
+  apps/api/src/session.ts (nuevo)
+  apps/api/src/routes/auth.ts, library.ts
+  apps/api/tests/library-routes.test.ts
+  apps/web/src/lib/session.ts
+  apps/web/src/components/{SessionProvider,RequireSession,GameCover}.tsx
+  apps/web/src/pages/Biblioteca.tsx
+  apps/web/e2e/smoke.spec.ts, apps/web/playwright.config.ts
+
+VERIFICACION
+  - pnpm typecheck, lint y build sin errores
+  - pnpm test: 28 tests de api (13 de precios + 15 de sesion/biblioteca)
+  - pnpm test:e2e: 3 pruebas de humo de navegador
+  - Contra el API real: /api/library sin cookie -> 401; login -> cookie
+    gs_session; /auth/me devuelve el usuario; filtros status/provider correctos
+
+PENDIENTE
+  - price_cache con TTL si llega ITAD real.
+  - Errores tipados en el cliente HTTP (red vs. validacion).
+  - Pruebas unitarias del comparador de precios.
+  - `node dist/index.js` no arranca por imports ESM sin extension (solo afecta
+    al script `start`; el desarrollo usa tsx).
+
+================================================================================
+

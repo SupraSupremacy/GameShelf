@@ -1,0 +1,31 @@
+node_modules/
+dist/
+build/
+coverage/
+.vite/
+
+# datos locales
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+apps/api/data/
+
+# entorno
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# playwright
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+
+# sistema
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+pnpm-debug.log*

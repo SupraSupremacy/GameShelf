@@ -1,0 +1,27 @@
+Game Shelf
+(Todas tus opciones en un solo lugar)
+
+
+|Objetivos|
+
+Obgetivos generales:
+- Implementar un sistema de consulta y comparación de precios en tiempo real entre Steam, Epic Games Store y GOG, que facilite al usuario la toma de decisiones de compra al menor costo posible.
+- Desarrollar una plataforma web que centralice un catálogo personal de videojuegos adquiridos en Steam, Epic Games Store y GOG, permitiendo al usuario gestionar su biblioteca desde un solo entorno.
+
+
+Objetivos específicos:
+- Analizar las APIs oficiales de Steam, Epic Games Store y GOG para determinar su viabilidad de integración (autenticación, catálogo, precios, compras).
+- Diseñar la arquitectura del sistema y la interfaz de usuario que permita la navegación unificada entre los catálogos de las tres plataformas.
+- Diseñar el módulo de autenticación y vinculación de cuentas de Steam, Epic y GOG.
+- Desarrollar el catálogo personal donde el usuario pueda visualizar, clasificar y filtrar sus juegos adquiridos.
+- Implementar un comparador de precios que muestre en tiempo real el costo de un mismo título en las tres tiendas.
+- Validar el funcionamiento del sistema mediante pruebas funcionales, de integración y de usabilidad.
+
+
+
+
+|¿Por qué es innovador?|
+
+Porque la mayoría de usuarios, al momento de comprar videojuegos en alguna plataforma, siempre buscan que su juego esté al menor precio posible, esperando así las épocas de mejores ofertas para poder comprarlos, pero muchas veces sin tener en consideración los precios que pueden haber en otras tiendas de videojuegos.
+
+Si bien existen comparadores de precios de videojuegos (como IsThereAnyDeal o Deku Deals), la mayoría se enfoca únicamente en la comparación y no en la gestión unificada del catálogo personal del usuario. Esta plataforma no solo permitirá comparar precios en tiempo real entre Steam, Epic Games Store y GOG, sino también centralizar en un solo lugar los juegos adquiridos en las tres tiendas, vinculando las cuentas del usuario mediante sus APIs oficiales. Esto resuelve dos problemas en uno: la dispersión del catálogo entre múltiples launchers y la falta de visibilidad de precios cruzados entre plataformas.
