@@ -3,166 +3,491 @@ JUEGOS DISPONIBLES EN LA PAGINA
 Catalogo del prototipo Game Shelf: todos estos juegos aparecen en la
 busqueda, se pueden anadir a la biblioteca y comparar precios.
 
-Total: 38 juegos
+Total: 120 juegos
 
 1. A Plague Tale: Innocence
    Tiendas: Steam, Epic Games Store
    Generos: Aventura, Narrativo, Sigilo
 
-2. Baldur's Gate 3
+2. A Short Hike
+   Tiendas: Steam, GOG
+   Generos: Aventura, Exploración, Indie
+
+3. Assassin's Creed Origins
+   Tiendas: Steam, Epic Games Store
+   Generos: Mundo abierto, Aventura, Acción
+
+4. Baba Is You
+   Tiendas: Steam, GOG
+   Generos: Puzles, Lógica, Indie
+
+5. Baldur's Gate 3
    Tiendas: Steam, GOG
    Generos: RPG, Estrategia, Cooperativo
 
-3. Celeste
+6. BioShock Infinite
+   Tiendas: Steam, GOG
+   Generos: FPS, Ciencia ficción, Narrativo
+
+7. Blasphemous
+   Tiendas: Steam, GOG
+   Generos: Metroidvania, Souls-like, Horror
+
+8. Borderlands 3
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: FPS, RPG, Cooperativo
+
+9. Celeste
    Tiendas: Steam, Epic Games Store, GOG
    Generos: Plataformas, Puzles, Indie
 
-4. Control
+10. Citizen Sleeper
+   Tiendas: Steam, GOG
+   Generos: RPG, Ciencia ficción, Indie
+
+11. Coffee Talk
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Simulación, Narrativo, Indie
+
+12. Control
    Tiendas: Steam, Epic Games Store, GOG
    Generos: Action, Sobrenatural, Tercera persona
 
-5. Cyberpunk 2077
+13. Cult of the Lamb
+   Tiendas: Steam, GOG
+   Generos: Roguelike, Simulación, Indie
+
+14. Cuphead
+   Tiendas: Steam, GOG
+   Generos: Plataformas, Acción, Indie
+
+15. Cyberpunk 2077
    Tiendas: Steam, GOG
    Generos: RPG, Mundo abierto, Ciencia ficción
 
-6. Dead Cells
+16. Dark Souls III
+   Tiendas: Steam, GOG
+   Generos: Souls-like, Action RPG, Fantasía
+
+17. Darkest Dungeon
+   Tiendas: Steam, GOG
+   Generos: Roguelike, Estrategia, Horror
+
+18. Dave the Diver
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Aventura, Simulación, Indie
+
+19. Days Gone
+   Tiendas: Steam, GOG
+   Generos: Acción, Supervivencia, Mundo abierto
+
+20. Dead Cells
    Tiendas: Steam, Epic Games Store, GOG
    Generos: Roguelike, Metroidvania, Action
 
-7. Death Stranding
+21. Death Stranding
    Tiendas: Steam, GOG
    Generos: Aventura, Exploración, Ciencia ficción
 
-8. Disco Elysium
+22. Desktop Dungeons
+   Tiendas: Steam, GOG
+   Generos: Roguelike, Puzles, Estrategia
+
+23. Detroit: Become Human
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Narrativo, Aventura, Ciencia ficción
+
+24. Disco Elysium
    Tiendas: Steam, Epic Games Store, GOG
    Generos: RPG, Detective, Narrativo
 
-9. Dragon Age: Inquisition
+25. Dishonored 2
+   Tiendas: Steam, GOG
+   Generos: Sigilo, Acción, Fantasía
+
+26. DOOM
+   Tiendas: Steam, GOG
+   Generos: FPS, Acción, Horror
+
+27. Dragon Age: Inquisition
    Tiendas: Steam, GOG
    Generos: RPG, Fantasía, Mundo abierto
 
-10. Elden Ring
+28. DVOLVER
+   Tiendas: Steam
+   Generos: Plataformas, Comedia, Indie
+
+29. Dwarf Fortress
+   Tiendas: Steam, GOG
+   Generos: Simulación, Estrategia, Roguelike
+
+30. Dying Light 2: Stay Human
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Acción, Mundo abierto, Zombies
+
+31. Eastward
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Aventura, RPG, Píxeles
+
+32. Elden Ring
    Tiendas: Steam, GOG
    Generos: Action RPG, Souls-like, Mundo abierto
 
-11. Elden Ring: Nightreign
+33. Elden Ring: Nightreign
    Tiendas: Steam, Epic Games Store
    Generos: Action RPG, Cooperativo, Souls-like
 
-12. Factorio
+34. Factorio
    Tiendas: Steam, GOG
    Generos: Simulación, Automatización, Estrategia
 
-13. Griftlands
+35. Fallout 4
+   Tiendas: Steam, GOG
+   Generos: RPG, Mundo abierto, Ciencia ficción
+
+36. Far Cry 5
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: FPS, Mundo abierto, Acción
+
+37. Firewatch
+   Tiendas: Steam, GOG
+   Generos: Aventura, Misterio, Narrativo
+
+38. Frog Fractions
+   Tiendas: Steam, GOG
+   Generos: Arcade, Comedia, Indie
+
+39. Ghost of Tsushima
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Acción, Mundo abierto, Aventura
+
+40. God of War
+   Tiendas: Steam, GOG
+   Generos: Acción, Aventura, RPG
+
+41. God of War Ragnarök
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Acción, Aventura, RPG
+
+42. Grand Theft Auto V
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Mundo abierto, Acción, Conducción
+
+43. Griftlands
    Tiendas: Steam, Epic Games Store, GOG
    Generos: Roguelike, Cartas, Indie
 
-14. Hades
+44. Gris
+   Tiendas: Steam, GOG
+   Generos: Plataformas, Puzles, Indie
+
+45. Hades
    Tiendas: Steam, Epic Games Store, GOG
    Generos: Roguelike, Action, Indie
 
-15. Hollow Knight
+46. Hades II
+   Tiendas: Steam, Epic Games Store
+   Generos: Roguelike, Acción, Indie
+
+47. Half-Life 2
+   Tiendas: Steam, GOG
+   Generos: FPS, Ciencia ficción, Acción
+
+48. Hogwarts Legacy
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: RPG, Mundo abierto, Fantasía
+
+49. Hollow Knight
    Tiendas: Steam, Epic Games Store, GOG
    Generos: Metroidvania, Plataformas, Indie
 
-16. Hollow Knight: Silksong
+50. Hollow Knight: Silksong
    Tiendas: Steam, Epic Games Store
    Generos: Metroidvania, Plataformas, Indie
 
-17. Inside
+51. Horizon Zero Dawn
+   Tiendas: Steam, GOG
+   Generos: RPG, Mundo abierto, Ciencia ficción
+
+52. Hyper Light Drifter
+   Tiendas: Steam, GOG
+   Generos: Acción, Píxeles, Indie
+
+53. Inscryption
+   Tiendas: Steam, GOG
+   Generos: Roguelike, Cartas, Horror
+
+54. Inside
    Tiendas: Steam, Epic Games Store, GOG
    Generos: Plataformas, Puzles, Atmósfera
 
-18. It Takes Two
+55. It Takes Two
    Tiendas: Steam, Epic Games Store, GOG
    Generos: Cooperativo, Aventura, Plataformas
 
-19. Kentucky Route Zero
+56. Journey
+   Tiendas: Steam, Epic Games Store
+   Generos: Aventura, Exploración, Indie
+
+57. Katana ZERO
+   Tiendas: Steam, GOG
+   Generos: Acción, Plataformas, Píxeles
+
+58. Kena: Bridge of Spirits
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Acción, Aventura, Fantasía
+
+59. Kentucky Route Zero
    Tiendas: Steam, GOG
    Generos: Aventura, Puzles, Narrativo
 
-20. Liars and Thieves
+60. Liars and Thieves
    Tiendas: Steam, GOG
    Generos: Robo, Cooperativo, Indie
 
-21. Mass Effect: Legendary Edition
+61. Marvel's Spider-Man Remastered
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Acción, Mundo abierto, Aventura
+
+62. Mass Effect: Legendary Edition
    Tiendas: Steam, GOG
    Generos: RPG, Ciencia ficción, Narrativo
 
-22. Monument Valley 2
+63. Monster Hunter: World
+   Tiendas: Steam, GOG
+   Generos: Action RPG, Caza, Cooperativo
+
+64. Monument Valley 2
    Tiendas: Steam, GOG
    Generos: Puzles, Minimalista, Indie
 
-23. No Man's Sky
+65. Neon White
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: FPS, Arcade, Indie
+
+66. NieR: Automata
+   Tiendas: Steam, GOG
+   Generos: RPG, Acción, Ciencia ficción
+
+67. Night in the Woods
+   Tiendas: Steam, GOG
+   Generos: Narrativo, Indie, Aventura
+
+68. No Man's Sky
    Tiendas: Steam, Epic Games Store, GOG
    Generos: Exploración, Supervivencia, Mundo abierto
 
-24. Outer Wilds
+69. NORCO
+   Tiendas: Steam, GOG
+   Generos: Narrativo, Ciencia ficción, Misterio
+
+70. Northern Journey
+   Tiendas: Steam, GOG
+   Generos: Aventura, Acción, Fantasía
+
+71. OneShot
+   Tiendas: Steam, GOG
+   Generos: Narrativo, Puzles, Indie
+
+72. Ori and the Will of the Wisps
+   Tiendas: Steam, GOG
+   Generos: Metroidvania, Plataformas, Indie
+
+73. Outer Wilds
    Tiendas: Steam, Epic Games Store, GOG
    Generos: Exploración, Puzles, Indie
 
-25. Red Dead Redemption 2
+74. Overcooked 2
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Cooperativo, Arcade, Indie
+
+75. Oxenfree
+   Tiendas: Steam, GOG
+   Generos: Aventura, Misterio, Narrativo
+
+76. Persona 5 Royal
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: RPG, Anime, Simulación
+
+77. Portal 2
+   Tiendas: Steam
+   Generos: Puzles, Ciencia ficción, Cooperativo
+
+78. Red Dead Redemption 2
    Tiendas: Steam, Epic Games Store
    Generos: Mundo abierto, Aventura, Western
 
-26. Returnal
+79. Resident Evil 2
+   Tiendas: Steam, GOG
+   Generos: Horror, Supervivencia, Acción
+
+80. Resident Evil 4
+   Tiendas: Steam, GOG
+   Generos: Acción, Horror, Supervivencia
+
+81. Return of the Obra Dinn
+   Tiendas: Steam, GOG
+   Generos: Lógica, Misterio, Indie
+
+82. Returnal
    Tiendas: Steam, Epic Games Store, GOG
    Generos: Roguelike, Terror, Tercera persona
 
-27. Rogue Legacy 2
+83. Ring of Pain
+   Tiendas: Steam, GOG
+   Generos: Roguelike, Cartas, Horror
+
+84. Rocket League
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Deportes, Conducción, Arcade
+
+85. Rogue Legacy 2
    Tiendas: Steam, Epic Games Store, GOG
    Generos: Roguelike, Metroidvania, Indie
 
-28. Satisfactory
+86. Satisfactory
    Tiendas: Steam
    Generos: Simulación, Automatización, Primera persona
 
-29. Sea of Stars
+87. Sea of Stars
    Tiendas: Steam, Epic Games Store, GOG
    Generos: RPG, Píxeles, Cooperativo
 
-30. Sifu
+88. Sekiro: Shadows Die Twice
+   Tiendas: Steam, GOG
+   Generos: Action RPG, Souls-like, Acción
+
+89. Shadow of the Tomb Raider
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Aventura, Mundo abierto, Sigilo
+
+90. Sifu
    Tiendas: Steam, Epic Games Store, GOG
    Generos: Action, Artes marciales, Indie
 
-31. Stardew Valley
+91. Signalis
+   Tiendas: Steam, GOG
+   Generos: Horror, Supervivencia, Misterio
+
+92. Slay the Spire
+   Tiendas: Steam, GOG
+   Generos: Roguelike, Cartas, Estrategia
+
+93. Spelunky 2
+   Tiendas: Steam, GOG
+   Generos: Roguelike, Plataformas, Indie
+
+94. Spiritfarer
+   Tiendas: Steam, GOG
+   Generos: Aventura, Gestión, Indie
+
+95. Star Wars Jedi: Fallen Order
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Acción, Aventura, Ciencia ficción
+
+96. Stardew Valley
    Tiendas: Steam, Epic Games Store, GOG
    Generos: Simulación, Agricultura, Indie
 
-32. Stardew Valley: Expanded
+97. Stardew Valley: Expanded
    Tiendas: Steam
    Generos: Simulación, Agricultura, Indie
 
-33. Subnautica
+98. Stray
+   Tiendas: Steam, GOG
+   Generos: Aventura, Plataformas, Indie
+
+99. Street Fighter 6
+   Tiendas: Steam
+   Generos: Lucha, Arcade, Deportes
+
+100. Subnautica
    Tiendas: Steam, Epic Games Store, GOG
    Generos: Supervivencia, Exploración, Underwater
 
-34. Sunless Sea
+101. Sunless Sea
    Tiendas: Steam, GOG
    Generos: Exploración, RPG, Narrativo
 
-35. Terraria
+102. Tekken 7
+   Tiendas: Steam, GOG
+   Generos: Lucha, Arcade, Acción
+
+103. Terraria
    Tiendas: Steam, GOG
    Generos: Sandbox, Aventura, Indie
 
-36. The Expanse: A Telltale Series
-   Tiendas: Steam, Epic Games Store, GOG
-   Generos: Aventura, Narrativo, Ciencia ficción
-
-37. The Witcher 3: Wild Hunt
+104. The Elder Scrolls V: Skyrim
    Tiendas: Steam, GOG
    Generos: RPG, Mundo abierto, Fantasía
 
-38. Wreckfest
+105. The Expanse: A Telltale Series
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Aventura, Narrativo, Ciencia ficción
+
+106. The Forest
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Supervivencia, Horror, Cooperativo
+
+107. The Last of Us Part I
+   Tiendas: Steam, GOG
+   Generos: Aventura, Narrativo, Supervivencia
+
+108. The Messenger
+   Tiendas: Steam, GOG
+   Generos: Plataformas, Acción, Píxeles
+
+109. The Outer Worlds
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: RPG, Ciencia ficción, Mundo abierto
+
+110. The Void
+   Tiendas: Steam, GOG
+   Generos: Supervivencia, Fantasía, Misterio
+
+111. The Witcher 3: Wild Hunt
+   Tiendas: Steam, GOG
+   Generos: RPG, Mundo abierto, Fantasía
+
+112. The Witness
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Puzles, Misterio, Indie
+
+113. Thimbleweed Park
+   Tiendas: Steam, GOG
+   Generos: Misterio, Aventura, Retromanía
+
+114. Titanfall 2
+   Tiendas: Steam
+   Generos: FPS, Ciencia ficción, Acción
+
+115. TOEM
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Aventura, Fotografía, Indie
+
+116. TUNIC
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Acción, Aventura, Misterio
+
+117. Undertale
+   Tiendas: Steam, GOG
+   Generos: RPG, Indie, Narrativo
+
+118. Vampire Survivors
+   Tiendas: Steam
+   Generos: Roguelike, Indie, Acción
+
+119. Watch Dogs 2
+   Tiendas: Steam, Epic Games Store, GOG
+   Generos: Mundo abierto, Acción, Hacking
+
+120. Wreckfest
    Tiendas: Steam, Epic Games Store, GOG
    Generos: Carreras, Destrucción, Multijugador
 
 Cobertura de tiendas:
-  - Steam: 38 juegos
-  - Epic Games Store: 23 juegos
-  - GOG: 32 juegos
+  - Steam: 120 juegos
+  - Epic Games Store: 51 juegos
+  - GOG: 106 juegos
 
-Fecha: 2026-10-07
-
-Nota (11/10/2026): sin cambios. El catalogo sigue con 38 juegos; la sesion con
-cookie, la grilla y los filtros de la Biblioteca no agregan ni quitan titulos.
+Fecha: 2026-10-19
