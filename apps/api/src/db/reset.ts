@@ -1,19 +1,37 @@
-import { existsSync, rmSync } from 'node:fs'
-import { resolve } from 'node:path'
-import { env } from '../config/env'
+import { sql } from 'drizzle-orm'
+import { db, isPglite } from './client'
 
 /**
- * Borra el archivo de base de datos para empezar de cero.
- * Se usa antes de `db:seed` en desarrollo.
+ * Borra los datos reiniciando las tablas de la app, sin tocar extensiones
+ * ni el esquema `public` completo (Supabase guarda cosas ahi).
+ *
+ *        pnpm db:reset && pnpm db:seed
  */
-const target = resolve(process.cwd(), env.DATABASE_URL.replace(/^file:/, ''))
+const TABLES = [
+  'user_games',
+  'game_genres',
+  'game_platforms',
+  'price_cache',
+  'sync_logs',
+  'prices',
+  'games',
+  'genres',
+  'users',
+] as const
 
-for (const suffix of ['', '-wal', '-shm', '-journal']) {
-  const file = target + suffix
-  if (existsSync(file)) {
-    rmSync(file, { force: true })
-    console.log('borrado:', file)
+async function main(): Promise<void> {
+  if (isPglite) {
+    console.log('reset no aplica en modo test (PGlite es efimero).')
+    return
   }
+
+  const list = TABLES.join(', ')
+  await db.execute(sql.raw(`drop table if exists ${list} cascade`))
+  console.log(`Tablas borradas: ${list}`)
+  console.log('Base de datos reiniciada. Corre `pnpm db:migrate && pnpm db:seed`.')
 }
 
-console.log('Base de datos reiniciada.')
+main().catch((error: unknown) => {
+  console.error('Reset fallo:', error)
+  process.exit(1)
+})

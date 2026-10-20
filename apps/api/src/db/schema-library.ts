@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, unique } from 'drizzle-orm/sqlite-core'
+import { pgTable, text, integer, serial, timestamp, unique } from 'drizzle-orm/pg-core'
 import { games } from './schema-catalog'
 
 /**
@@ -10,10 +10,10 @@ import { games } from './schema-catalog'
  *
  * Todos los montos son enteros en centavos. Nunca punto flotante.
  */
-export const userGames = sqliteTable(
+export const userGames = pgTable(
   'user_games',
   {
-    id: integer('id').primaryKey({ autoIncrement: true }),
+    id: serial('id').primaryKey(),
     userId: text('user_id').notNull(),
     gameId: integer('game_id')
       .notNull()
@@ -31,9 +31,7 @@ export const userGames = sqliteTable(
     source: text('source', { enum: ['api', 'manual'] })
       .notNull()
       .default('manual'),
-    createdAt: integer('created_at', { mode: 'timestamp' })
-      .notNull()
-      .$defaultFn(() => new Date()),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [unique('user_games_user_game').on(t.userId, t.gameId)],
 )

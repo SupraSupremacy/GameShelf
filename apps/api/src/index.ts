@@ -9,7 +9,7 @@ import { runMigrations } from './db/migrate-runner'
  * aparece "no such table" en el primer request.
  */
 async function main(): Promise<void> {
-  runMigrations()
+  await runMigrations()
 
   const app = await buildServer()
 

@@ -1,8 +1,8 @@
-import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core'
+import { pgTable, text, integer, primaryKey } from 'drizzle-orm/pg-core'
 import { games, genres } from './schema-catalog'
 
 /** Generos del juego. */
-export const gameGenres = sqliteTable(
+export const gameGenres = pgTable(
   'game_genres',
   {
     gameId: integer('game_id')
@@ -16,7 +16,7 @@ export const gameGenres = sqliteTable(
 )
 
 /** En que tiendas existe este juego y a que direccion ir. */
-export const gamePlatforms = sqliteTable(
+export const gamePlatforms = pgTable(
   'game_platforms',
   {
     gameId: integer('game_id')

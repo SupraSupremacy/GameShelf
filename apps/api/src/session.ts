@@ -17,7 +17,7 @@ import type { ProviderId, SessionUser } from '@gameshelf/shared'
 export const SESSION_COOKIE = 'gs_session'
 
 /** Sin secreto configurado se usa uno fijo de desarrollo (solo demo). */
-export const SESSION_SECRET = env.SESSION_SECRET ?? 'gameshelf-demo-secret'
+export const SESSION_SECRET = env.SESSION_SECRET || 'gameshelf-demo-secret'
 
 export function setSessionCookie(reply: FastifyReply, userId: string): void {
   reply.setCookie(SESSION_COOKIE, userId, {

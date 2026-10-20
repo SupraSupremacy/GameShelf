@@ -1,4 +1,4 @@
-{# Game Shelf
+# Game Shelf
 
 Prototipo educativo de una **biblioteca personal de juegos** con comparador de
 precios entre Steam, Epic Games Store y GOG.
@@ -17,13 +17,20 @@ precios entre Steam, Epic Games Store y GOG.
 | pnpm        | 12.9.1             |
 | TypeScript  | 5.7+               |
 
-No se requiere Docker ni base de datos externa: SQLite va en archivo local.
+La base de datos es **PostgreSQL**, alojada en **Supabase**. La API se conecta
+con el connection string de `DATABASE_URL`; no hay archivo local.
 
 ## Puesta en marcha
 
+1. En Supabase → **SQL Editor**, corre [`supabase-00-rename-flat.sql`](supabase-00-rename-flat.sql)
+   una vez (libera el nombre `games` de la tabla plana importada antes).
+2. Copia `apps/api/.env.example` a `apps/api/.env` y pega tu **connection string**
+   de Supabase (Project Settings → Database → Session Pooler).
+3. Instala, migra y siembra:
+
 ```bash
 pnpm install
-pnpm setup     # crea el archivo de base de datos y siembra el catalogo
+pnpm setup     # aplica migraciones y siembra el catalogo en Supabase
 pnpm dev       # api en :3000 y web en :5173
 ```
 
@@ -48,14 +55,14 @@ necesita `db:generate`. Ese comando solo hace falta tras cambiar el esquema.
 | `pnpm db:generate`  | Regenera la migracion desde el esquema            |
 | `pnpm db:migrate`   | Aplica migraciones pendientes                     |
 | `pnpm db:seed`      | Siembra catalogo y cuentas demo                   |
-| `pnpm db:reset`     | Borra el archivo de base y lo reconstruye         |
+| `pnpm db:reset`     | Borra las tablas de la app en Postgres            |
 
 ## Estructura
 
 ```
 Game Shelf/
 ├─ apps/
-│  ├─ api/                 Fastify + Drizzle + SQLite
+│  ├─ api/                 Fastify + Drizzle + PostgreSQL (Supabase)
 │  │  └─ src/
 │  │     ├─ config/        Lectura y validacion de variables de entorno
 │  │     ├─ db/            Esquema, migraciones, cliente y seed
@@ -96,7 +103,7 @@ Configuracion en `apps/api/.env` (copiar de `.env.example`):
 
 | Variable         | Por defecto | Para que sirve                        |
 | ---------------- | ----------- | ------------------------------------- |
-| `DATABASE_URL`   | `file:./data/gameshelf.db` | Ubicacion del archivo SQLite |
+| `DATABASE_URL`   | *(obligatorio)* | Connection string de Postgres/Supabase (Session Pooler) |
 | `DEMO_MODE`      | `true`      | Muestra el distintivo de demo          |
 | `SESSION_SECRET` | *(vacio)*   | Firma la cookie de sesion (hay default de desarrollo) |
 | `PRICES_SOURCE`  | `auto`      | `auto`, `itad` o `mock`               |
@@ -152,8 +159,8 @@ antes de escribir.
 
 `pnpm test` corre 55 tests unitarios y de rutas de la api. El foco es el
 simulador de precios, que al ser determinista se puede comprobar de forma
-exacta, la sesion + el CRUD de biblioteca, que se prueban sobre una base
-temporal con cookie real, y la integridad del catalogo semilla (que no se
+exacta, la sesion + el CRUD de biblioteca, que se prueban sobre **PGlite**
+(Postgres en proceso, en memoria) con cookie real, y la integridad del catalogo semilla (que no se
 dupliquen slugs/titulos y que el seed de 120 juegos sea idempotente):
 
 | Que se comprueba                                  | Por que importa                          |

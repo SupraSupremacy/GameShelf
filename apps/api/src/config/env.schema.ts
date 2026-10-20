@@ -2,7 +2,9 @@ import { z } from 'zod'
 
 export const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-  DATABASE_URL: z.string().default('file:./data/gameshelf.db'),
+  // Cadena de conexion de Postgres/Supabase. Sin default: si falta, la app
+  // falla al arrancar en vez de caer silenciosamente a una base local.
+  DATABASE_URL: z.string().min(1),
   SESSION_SECRET: z.string().optional(),
   DEMO_MODE: z.enum(['true', 'false']).default('true'),
   PRICES_SOURCE: z.enum(['auto', 'itad', 'mock']).default('auto'),

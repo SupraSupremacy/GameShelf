@@ -1,10 +1,8 @@
 import { describe, expect, it, beforeAll } from 'vitest'
-import { tmpdir } from 'node:os'
-import { join } from 'node:path'
 import { PROVIDERS } from '@gameshelf/shared'
 
-const dbPath = join(tmpdir(), `gameshelf-catalog-${Date.now()}.db`)
-process.env.DATABASE_URL = `file:${dbPath}`
+// En tests la base es PGlite en memoria; DATABASE_URL solo pasa el schema Zod.
+process.env.DATABASE_URL = 'postgres://test:test@localhost:5432/gameshelf_test'
 process.env.NODE_ENV = 'test'
 process.env.PRICES_SOURCE = 'mock'
 process.env.DEMO_MODE = 'true'
@@ -63,7 +61,7 @@ beforeAll(
     async () => {
       const { runMigrations } = await import('../src/db/migrate-runner')
       const { seedCatalog } = await import('../src/db/seed-catalog')
-      runMigrations()
+      await runMigrations()
       // Se corre dos veces a proposito: el seed es idempotente y esto lo prueba.
       let last: Map<string, number> = new Map()
       for (let i = 0; i < 2; i++) last = await seedCatalog()

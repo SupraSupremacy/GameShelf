@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, unique } from 'drizzle-orm/sqlite-core'
+import { pgTable, text, integer, serial, timestamp, unique } from 'drizzle-orm/pg-core'
 import { games } from './schema-catalog'
 
 /**
@@ -6,10 +6,10 @@ import { games } from './schema-catalog'
  * Centavos enteros. Guardamos de mas por si despues se compara entre
  * monedas distintas.
  */
-export const prices = sqliteTable(
+export const prices = pgTable(
   'prices',
   {
-    id: integer('id').primaryKey({ autoIncrement: true }),
+    id: serial('id').primaryKey(),
     gameId: integer('game_id')
       .notNull()
       .references(() => games.id, { onDelete: 'cascade' }),
@@ -23,7 +23,7 @@ export const prices = sqliteTable(
     historyLow: integer('history_low'),
     storeLow: integer('store_low'),
     url: text('url').notNull(),
-    fetchedAt: integer('fetched_at', { mode: 'timestamp' }).notNull(),
+    fetchedAt: timestamp('fetched_at', { withTimezone: true }).notNull(),
   },
   (t) => [unique('prices_game_provider_currency').on(t.gameId, t.provider, t.currency)],
 )

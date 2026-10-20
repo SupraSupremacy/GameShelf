@@ -1,9 +1,7 @@
 import { describe, expect, it, beforeAll } from 'vitest'
-import { tmpdir } from 'node:os'
-import { join } from 'node:path'
 
-const dbPath = join(tmpdir(), `gameshelf-crud-${Date.now()}.db`)
-process.env.DATABASE_URL = `file:${dbPath}`
+// En tests la base es PGlite en memoria; DATABASE_URL solo pasa el schema Zod.
+process.env.DATABASE_URL = 'postgres://test:test@localhost:5432/gameshelf_test'
 process.env.NODE_ENV = 'test'
 process.env.PRICES_SOURCE = 'mock'
 process.env.DEMO_MODE = 'true'
@@ -22,7 +20,7 @@ beforeAll(
       const { seedUsers } = await import('../src/db/seed-users')
       const { buildServer } = await import('../src/app')
 
-      runMigrations()
+      await runMigrations()
       const gameIds = await seedCatalog()
       await seedUsers(gameIds)
 

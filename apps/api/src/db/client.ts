@@ -1,25 +1,35 @@
-import Database from 'better-sqlite3'
-import { drizzle, type BetterSQLite3Database } from 'drizzle-orm/better-sqlite3'
-import { dirname, resolve } from 'node:path'
-import { mkdirSync } from 'node:fs'
+import postgres from 'postgres'
+import { drizzle as drizzlePg, type PostgresJsDatabase } from 'drizzle-orm/postgres-js'
+import { PGlite } from '@electric-sql/pglite'
+import { drizzle as drizzlePglite } from 'drizzle-orm/pglite'
 import * as schema from './schema'
 import { env } from '../config/env'
 
-export type Db = BetterSQLite3Database<typeof schema>
+/**
+ * Tipo publico de la base. Es el de postgres-js (Postgres/Supabase). En tests
+ * se usa PGlite (Postgres en proceso) y se castea a este tipo: comparten el
+ * mismo dialecto pg y la misma API de query builder, solo cambia el driver.
+ */
+export type Db = PostgresJsDatabase<typeof schema>
 
-/** Traduce `file:./data/x.db` a una ruta absoluta y crea el directorio. */
-function resolveDbPath(url: string): string {
-  const raw = url.replace(/^file:/, '')
-  const abs = resolve(process.cwd(), raw)
-  mkdirSync(dirname(abs), { recursive: true })
-  return abs
+/** En tests se levanta PGlite en memoria en vez de conectarse a Supabase. */
+export const isPglite = env.NODE_ENV === 'test'
+
+function createPglite(): Db {
+  const client = new PGlite()
+  return drizzlePglite(client, { schema }) as unknown as Db
 }
 
-export function createDb(url = env.DATABASE_URL): Db {
-  const sqlite = new Database(resolveDbPath(url))
-  sqlite.pragma('journal_mode = WAL')
-  sqlite.pragma('foreign_keys = ON')
-  return drizzle(sqlite, { schema })
+function createPostgres(url: string): Db {
+  // `prepare: false` es obligatorio con el transaction pooler de Supabase y
+  // seguro con el session pooler. `ssl: require` cifra la conexion.
+  const client = postgres(url, { prepare: false, ssl: 'require' })
+  return drizzlePg(client, { schema })
+}
+
+export function createDb(): Db {
+  if (isPglite) return createPglite()
+  return createPostgres(env.DATABASE_URL)
 }
 
 export const db: Db = createDb()

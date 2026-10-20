@@ -3,8 +3,6 @@ packages:
   - 'packages/*'
 
 # pnpm >=11 no ejecuta scripts de instalacion salvo que se autoricen
-# explicitamente. better-sqlite3 lo necesita (modulo nativo) y esbuild
-# tambien (lo usa Vite).
+# explicitamente. esbuild lo necesita (lo usa Vite).
 allowBuilds:
-  better-sqlite3: true
   esbuild: true

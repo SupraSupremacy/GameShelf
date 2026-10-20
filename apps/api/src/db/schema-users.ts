@@ -1,13 +1,11 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
+import { pgTable, text, boolean, timestamp } from 'drizzle-orm/pg-core'
 
 /** Usuario de la app. En modo demo no hay contrasena real. */
-export const users = sqliteTable('users', {
+export const users = pgTable('users', {
   id: text('id').primaryKey(),
   username: text('username').notNull().unique(),
   displayName: text('display_name').notNull(),
   avatarColor: text('avatar_color').notNull(),
-  isDemo: integer('is_demo', { mode: 'boolean' }).notNull().default(true),
-  createdAt: integer('created_at', { mode: 'timestamp' })
-    .notNull()
-    .$defaultFn(() => new Date()),
+  isDemo: boolean('is_demo').notNull().default(true),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 })

@@ -26,6 +26,7 @@ blob-report/
 # sistema
 .DS_Store
 Thumbs.db
+.vs/
 *.log
 npm-debug.log*
 pnpm-debug.log*

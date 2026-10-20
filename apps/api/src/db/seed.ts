@@ -8,7 +8,7 @@ import { seedUsers } from './seed-users'
  */
 async function main(): Promise<void> {
   console.log('Aplicando migraciones...')
-  runMigrations()
+  await runMigrations()
 
   console.log('Sembrando catalogo...')
   const gameIds = await seedCatalog()
