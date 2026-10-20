@@ -22,7 +22,7 @@ con el connection string de `DATABASE_URL`; no hay archivo local.
 
 ## Puesta en marcha
 
-1. En Supabase → **SQL Editor**, corre [`supabase-00-rename-flat.sql`](supabase-00-rename-flat.sql)
+1. En Supabase → **SQL Editor**, corre [`supabase/supabase-00-rename-flat.sql`](supabase/supabase-00-rename-flat.sql)
    una vez (libera el nombre `games` de la tabla plana importada antes).
 2. Copia `apps/api/.env.example` a `apps/api/.env` y pega tu **connection string**
    de Supabase (Project Settings → Database → Session Pooler).
@@ -75,10 +75,12 @@ Game Shelf/
 │        ├─ lib/           Cliente HTTP
 │        └─ pages/         Paginas
 ├─ packages/shared/        Contratos y tipos compartidos por api y web
-├─ Documentación.txt       Bitacora por fase
-├─ Pruebas.txt             Problemas, causas y soluciones
-├─ Pendientes opcionales.txt
-└─ ANALISIS-APIs.md        Viabilidad de cada fuente de datos
+├─ docs/                   Bitacora, objetivos, pruebas y pendientes
+│  ├─ Documentación.txt    Bitacora por fase
+│  ├─ Pruebas.txt          Problemas, causas y soluciones
+│  ├─ Pendientes opcionales.txt
+│  └─ ANALISIS-APIs.md     Viabilidad de cada fuente de datos
+└─ supabase/               SQL y CSV del catalogo inicial
 ```
 
 `packages/shared` existe para que api y web compartan exactamente los mismos
@@ -178,9 +180,9 @@ tabla).
 
 ## Documentacion relacionada
 
-- [`ANALISIS-APIs.md`](ANALISIS-APIs.md) — que se puede obtener de cada
+- [`docs/ANALISIS-APIs.md`](docs/ANALISIS-APIs.md) — que se puede obtener de cada
   tienda y que no.
-- [`Documentación.txt`](Documentación.txt) — que se hizo en cada fase.
-- [`Pruebas.txt`](Pruebas.txt) — problemas encontrados y como se resolvieron.
-- [`Pendientes opcionales.txt`](Pendientes%20opcionales.txt) — mejoras
+- [`docs/Documentación.txt`](docs/Documentación.txt) — que se hizo en cada fase.
+- [`docs/Pruebas.txt`](docs/Pruebas.txt) — problemas encontrados y como se resolvieron.
+- [`docs/Pendientes opcionales.txt`](docs/Pendientes%20opcionales.txt) — mejoras
   tecnicas del demo, con prioridad.
